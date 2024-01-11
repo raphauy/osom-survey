@@ -1,0 +1,90 @@
+import { getDataClientBySlug } from "@/app/admin/clients/(crud)/actions"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { getClientBySlug } from "@/services/clientService"
+import { getPropertiesOfClient } from "@/services/propertyService"
+import { getUsersOfClient } from "@/services/userService"
+import { HomeIcon, MessageCircle, User } from "lucide-react"
+import Link from "next/link"
+import { getDataConversations, getTotalMessages } from "./chats/actions"
+
+interface Props{
+  params: {
+    slug: string
+  },
+}
+ 
+type TipoCant = {
+  tipo: string | null,
+  cant: number
+}
+export default async function ClientPage({ params: { slug } }: Props) {
+
+  const dataClient= await getDataClientBySlug(slug)
+  if (!dataClient) return <div>Cliente no encontrado</div>
+
+  const client= await getClientBySlug(slug)
+  if (!client) return <div>Cliente no encontrado</div>
+
+  const users= await getUsersOfClient(client?.id)
+
+  const conversations= await getDataConversations(client.id)
+  const messages= await getTotalMessages(client.id)
+ 
+
+  return (
+    <div className="flex flex-col">
+      <p className="mt-10 mb-5 text-3xl font-bold text-center">{dataClient.nombre}</p>
+      <div className="grid grid-cols-1 gap-3 p-2 md:grid-cols-2">
+
+        <div className="flex flex-col items-center">
+          <Link href={`/client/${slug}/chats`}>
+            <Card className="w-64">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Chats</CardTitle>
+                <MessageCircle className="text-gray-500" size={20} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{conversations.length}</div>
+                <div className="flex justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    {messages === 0 ? 'no hay mensajes' : `${messages} mensajes`}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+        <div className="flex flex-col items-center">
+          <Link href={`/client/${slug}/users`}>
+            <Card className="w-64">
+              <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                <CardTitle className="text-sm font-medium">Usuarios</CardTitle>
+                <User className="text-gray-500" size={20} />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{client?.users.length}</div>
+                <div className="flex justify-between">
+                  {
+                    users.length === 0 && (
+                      <p className="text-xs text-muted-foreground">
+                        no hay usuarios
+                      </p>
+                    )                  
+                  }
+                  {
+                    users.map(user => (
+                      <p key={user.id} className="text-xs text-muted-foreground">
+                        {user.name}
+                      </p>
+                    ))
+                  }
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </div>
+    </div>
+  )
+}
