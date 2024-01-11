@@ -1,7 +1,4 @@
 import { getClientBySlug } from "@/services/clientService"
-import { DataTable } from "./data-table"
-import { columns } from "./columns"
-import { getDataConversations } from "./actions"
 import { MoveLeft } from "lucide-react"
 
 interface Props {

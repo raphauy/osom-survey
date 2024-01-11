@@ -1,13 +1,9 @@
-import { getClientBySlug } from "@/services/clientService"
-import { getDataConversation } from "../actions"
+import { getCurrentUser } from "@/lib/auth"
 import clsx from "clsx"
+import { Bot, User } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
-import { Bot, User } from "lucide-react"
-import GPTData from "./gpt-data"
-import { getCurrentUser } from "@/lib/auth"
-import { parse } from "path"
-import { formatPresupuesto } from "@/lib/utils"
+import { getDataConversation } from "../actions"
 
 interface Props {
     params: {
@@ -38,16 +34,6 @@ export default async function ChatPage({ params: { id } }: Props) {
         <main className="flex flex-col items-center justify-between w-full p-3 border-l">
           <div className="w-full pb-2 text-center border-b">
             <p className="text-lg font-bold">{conversation.celular} ({conversation.fecha})</p>
-            {
-              conversation.operacion && (
-                <div className="flex items-center justify-center gap-2">Última búsqueda: 
-                  <p className="font-bold">{conversation.operacion?.toUpperCase()},</p>
-                  <p className="font-bold">{conversation.tipo?.toLocaleLowerCase()},</p>
-                  <p className="font-bold">{conversation.zona},</p>
-                  <p className="font-bold">{formatPresupuesto(conversation.presupuesto)}</p>
-                </div>
-              )
-            }
           </div>  
           {
             transformedMessages.map((message, i) => (
@@ -86,13 +72,7 @@ export default async function ChatPage({ params: { id } }: Props) {
                           {message.content}
                       </ReactMarkdown>
                   </div>
-                </div>
-                {
-                  message.gptData && user?.role === "admin" && (
-                    <GPTData gptData={message.gptData} similarityThreshold={similarityThreshold} />
-                  )
-                }
-                
+                </div>                
               </div>
 
             ))

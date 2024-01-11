@@ -12,7 +12,6 @@ export type DataMessage = {
     updatedAt: Date
     role: string
     content: string
-    gptData: string | null
 }
 
 export type DataConversation = {
@@ -24,10 +23,6 @@ export type DataConversation = {
     clienteNombre: string
     clienteSlug: string
     clienteId?: string
-    operacion?: string
-    tipo?: string
-    zona?: string
-    presupuesto?: string
 }
       
 
@@ -52,15 +47,10 @@ function getData(conversation: Conversation & { messages: Message[], client: Cli
             updatedAt: message.updatedAt,
             role: message.role,
             content: message.content,
-            gptData: message.gptData
         })),
         clienteNombre: conversation.client.name,
         clienteSlug: conversation.client.slug,
         clienteId: conversation.clientId,
-        operacion: conversation.operacion || undefined,
-        tipo: conversation.tipo || undefined,
-        zona: conversation.zona || undefined,
-        presupuesto: conversation.presupuesto || undefined        
     }
     return data
 }
