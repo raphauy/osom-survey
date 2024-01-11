@@ -1,11 +1,11 @@
 {
-  "name": "osom",
+  "name": "osom-survey",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start -p 8061",
+    "start": "next start -p 8065",
     "lint": "next lint",
     "seed": "tsx prisma/seed.ts"
   },
