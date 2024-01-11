@@ -27,14 +27,14 @@ export default async function AuthenticationPage() {
               }}
             />
             <div className="relative z-20 flex items-center text-lg font-medium">
-              <Command className="w-6 h-6 mr-2" /> Osom Digital IA
+              <Command className="w-6 h-6 mr-2" /> Osom Survey + AI
             </div>
             <div className="relative z-20 mt-auto">
               <blockquote className="space-y-2">
                 <p className="text-lg">
-                  &ldquo;La IA es la próxima frontera.&rdquo;
+                  &ldquo;AI is the next frontier..&rdquo;                  
                 </p>
-                <footer className="text-sm">Autor Desconocido</footer>
+                <footer className="text-sm">Unknown author</footer>
               </blockquote>
             </div>
           </div>
