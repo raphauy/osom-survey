@@ -23,6 +23,8 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
         //@ts-ignore
         role: user.role,
+        //@ts-ignore
+        clientId: user.clientId,
       },
     }),
   },
@@ -31,17 +33,18 @@ export const authOptions: NextAuthOptions = {
     EmailProvider({
       server: {
         host: process.env.EMAIL_SERVER || 'http://localhost:3000',
-        port: 587,
+        port: process.env.EMAIL_PORT || 587,
         auth: {
-          user: process.env.EMAIL_FROM,
+          user: process.env.EMAIL_USER,
           pass: process.env.EMAIL_PASSWORD || "",
         },
+        from: process.env.EMAIL_FROM
       },
       from: process.env.EMAIL_FROM || "default@default.com",
       ... (process.env.NODE_ENV !== "production"
       ? {
           sendVerificationRequest({ url }) {
-            console.log("LOGIN LINK", url)
+            console.log("LOGIN LINK", url);
           },
         }
       : {}),
