@@ -1,6 +1,5 @@
 import { createOrUpdateTopicResponseFromFunctions } from "@/app/admin/topicresponses/topicresponse-actions";
 import { getEnabledTopicDAOByClientAndName } from "./topic-services";
-import { getTopicResponseDAOByPhoneAndTopicId } from "./topicresponse-services";
 
 export const functions= [
   {
@@ -84,7 +83,7 @@ export async function registrarRespuestas(tema: string, respuestaPlanteo: string
   const created= await createOrUpdateTopicResponseFromFunctions(topicResponseData)
   if (!created) return "Error al registrar la respuesta"
 
-  const response= "Respuesta registrada. No hace falta decirle al usuario que la respuesta fue registrada. Simplemente preguntar al usuario si quiere tratar otro tema."
+  const response= `Respuesta registrada para tema ${tema}. No hace falta decirle al usuario que la respuesta fue registrada. Simplemente preguntar al usuario si quiere tratar otro tema.`
   console.log("\tresponse: " + response)  
 
   return response

@@ -7,10 +7,9 @@ import { Separator } from '@/components/ui/separator'
 import { toast } from '@/components/ui/use-toast'
 import { cn } from '@/lib/utils'
 import { TopicDAO } from '@/services/topic-services'
-import { TopicResponseDAO } from '@/services/topicresponse-services'
 import { useChat } from 'ai/react'
 import clsx from 'clsx'
-import { Bot, Loader, SendIcon, User } from 'lucide-react'
+import { Bot, Cog, Loader, SendIcon, User } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -20,21 +19,44 @@ import remarkGfm from "remark-gfm"
 import { getTopicResponsesDAOByPhoneAction } from '../topicresponses/topicresponse-actions'
 import { DeleteTopicResponseDialog } from '../topicresponses/topicresponse-dialogs'
 import { getEnabledTopicsDAOBySlugAction } from '../topics/topic-actions'
+import { Message } from 'ai'
+import { getActiveMessagesAction } from './actions'
 
-export default function SloganGenerator() {
+const RAFFO_SLUG = "raffo"
+
+export default function SimulatorPage() {
   const formRef = useRef<HTMLFormElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  const router= useRouter()
-
-  const { messages, input, isLoading, handleSubmit, setInput } = useChat({onFinish: () => {setCounter(counter+1)}})
+  const { messages, input, isLoading, handleSubmit, setInput, setMessages } = useChat({onFinish: onFinished})
   const session = useSession()
   const [mail, setMail] = useState("")
-  const [responses, setResponses] = useState<TopicResponseDAO[]>()
+  const [responses, setResponses] = useState<any[]>()
   const [topics, setTopics] = useState<TopicDAO[] | null>()
   const [totalTopics, setTotalTopics] = useState(0)
   const [counter, setCounter] = useState(0)
   const [newResponse, setNewResponse] = useState(false)
+
+  function onFinished(message: Message) {
+    setCounter(counter+1)  
+  }
+
+  useEffect(() => {
+    const email= session?.data?.user?.email
+    console.log("updating messages")
+    
+    if (email) {
+      getActiveMessagesAction(email)
+      .then((res) => {
+        if(!res) return
+        // @ts-ignore
+        setMessages(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+    }
+    }, [session, setMessages, counter])
 
   useEffect(() => {
     if (session?.data?.user?.email) {
@@ -51,10 +73,10 @@ export default function SloganGenerator() {
         }
       })
     }
-  }, [session, counter, responses?.length])
+  }, [session, counter, responses])
   
   useEffect(() => {
-    getEnabledTopicsDAOBySlugAction("raffo")
+    getEnabledTopicsDAOBySlugAction(RAFFO_SLUG)
     .then((res) => {
       if(!res) return
       setTotalTopics(res.length)
@@ -82,8 +104,10 @@ export default function SloganGenerator() {
       <div className="flex flex-col items-center w-full pb-40">
         {messages.length > 0 ? (
           messages.map((message, i) => (
+            // skip functioni messages
+            message.role === "function" ? null :
             <div key={i} className={clsx("flex text-gray-800 w-full items-center border-b border-gray-200 py-2 px-5 mr-3",
-                message.role === "user" ? "bg-white" : "bg-gray-100",
+                message.role === "user" ? "bg-white" : message.role === "assistant" ? "bg-gray-100" : "bg-green-100",
               )}
             >
               <div className="flex items-center w-full mx-5 space-x-4">
@@ -95,11 +119,11 @@ export default function SloganGenerator() {
                 >
                   {message.role === "user" ? (
                     <User width={20} />
-                  ) : (
+                  ) : 
                     <Bot width={20} />
-                  )}
+                }
                 </div>
-                <div>
+                <div>                  
                 {message.content}
                 </div>
               </div>            

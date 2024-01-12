@@ -3,14 +3,8 @@ import { prisma } from "@/lib/db";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from "openai/resources/index.mjs";
 import { functions, obtenerInstrucciones, registrarRespuestas } from "./functions";
-import { TopicResponseDAO, getTopicResponsesDAOByPhone } from "./topicresponse-services";
+import { TopicResponseDAO, getActiveTopicResponsesDAOByPhone } from "./topicresponse-services";
 import { TopicDAO, getTopicsDAO } from "./topic-services";
-
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  //organization: "org-"
-})
 
 export default async function getConversations() {
 
@@ -48,28 +42,48 @@ export async function getConversationsOfClient(clientId: string) {
 // an active conversation is one that has a message in the last 10 minutes
 export async function getActiveConversation(phone: string, clientId: string) {
     
-    const found = await prisma.conversation.findFirst({
-      where: {
-        phone,
-        clientId,        
-        messages: {
-          some: {
-            createdAt: {
-              gte: new Date(Date.now() - 10 * 60 * 1000)
-            }
+  const toleranceInMinutes= 10
+
+  const found = await prisma.conversation.findFirst({
+    where: {
+      phone,
+      clientId,        
+      messages: {
+        some: {
+          createdAt: {
+            gte: new Date(Date.now() - toleranceInMinutes * 60 * 1000)
           }
         }
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        client: true
       }
-    })
-  
-    return found;
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+    include: {
+      client: true,
+      messages: {
+        orderBy: {
+          createdAt: 'asc',
+        },
+      }
+    }
+  })
+
+  return found;
 }
+
+export async function getActiveMessages(phone: string) {
+  const clientId= process.env.RAFFO_CLIENT_ID
+  if (!clientId) throw new Error("RAFFO_CLIENT_ID not defined")
+
+  const activeConversation= await getActiveConversation(phone, clientId)
+  if (!activeConversation) return null
+
+  const messages= activeConversation.messages
+
+  return messages
+}
+
 
 export async function getConversation(id: string) {
 
@@ -83,7 +97,7 @@ export async function getConversation(id: string) {
         orderBy: {
           createdAt: 'asc',
         },
-      }
+      },
     },
   })
 
@@ -91,11 +105,11 @@ export async function getConversation(id: string) {
 }
 
 // find an active conversation or create a new one to connect the messages
-export async function messageArrived(phone: string, text: string, clientId: string, role: string) {
+export async function messageArrived(phone: string, text: string, clientId: string, role: string, name?: string) {
 
   const activeConversation= await getActiveConversation(phone, clientId)
   if (activeConversation) {
-    const message= await createMessage(activeConversation.id, role, text)
+    const message= await createMessage(activeConversation.id, role, text, name)
     return message    
   } else {
     const created= await prisma.conversation.create({
@@ -104,7 +118,7 @@ export async function messageArrived(phone: string, text: string, clientId: stri
         clientId,
       }
     })
-    const message= await createMessage(created.id, role, text)
+    const message= await createMessage(created.id, role, text, name)    
     return message   
   }
 }
@@ -116,6 +130,10 @@ export interface gptPropertyData {
 }
 
 export async function processMessage(id: string) {
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+  
   const message= await prisma.message.findUnique({
     where: {
       id
@@ -137,12 +155,19 @@ export async function processMessage(id: string) {
   if (!conversation.client.prompt) throw new Error("Client not found")
   const messages: ChatCompletionMessageParam[]= getGPTMessages(conversation.messages as ChatCompletionUserOrSystem[], conversation.client.prompt, conversation.phone)
 
-  const topicsResponses= await getTopicResponsesDAOByPhone(conversation.phone)
+  const topicsResponses= await getActiveTopicResponsesDAOByPhone(conversation.phone)
   const topics= await getTopicsDAO()
   const topicsWithoutResponses= topics.filter(topic => !topicsResponses.find(topicResponse => topicResponse.topicId === topic.id))  
 
   const finalSystemMessage= getFinalSystemMessage(topicsResponses, topicsWithoutResponses)
   messages.push(finalSystemMessage)
+
+  // messages.forEach(message => {
+  //   if (message.role === 'function') {
+  //     console.log("function message found")      
+  //     message.name= "registrarRespuestas"
+  //   }
+  // })
 
   console.log("gptMessages: ", messages)
 
@@ -201,6 +226,8 @@ export async function processMessage(id: string) {
         name: "registrarRespuestas",
         content: JSON.stringify(content),
       })
+
+      await messageArrived(conversation.phone, content, conversation.clientId, "function", "registrarRespuestas")
 	  }
 
 
@@ -258,12 +285,6 @@ function getGPTMessages(messages: ChatCompletionUserOrSystem[], clientPrompt: st
 
 export function getSystemMessage(prompt: string): ChatCompletionSystemMessageParam {  
  
-  // let tecnicalContent= "Temas ya registrados para este usuario: "
-  // if (topicsDone)
-  //   tecnicalContent+= topicsDone + ". Estos temas no se deben registrar nuevamente"
-  // else tecnicalContent+= "NINGUNO"
-  // const content= prompt + "\n" + tecnicalContent
-
   const content= prompt
 
   const systemMessage: ChatCompletionMessageParam= {
@@ -280,7 +301,7 @@ export function getFinalSystemMessage(topicResponses: TopicResponseDAO[], topics
  
   let tecnicalContent= "Temas ya registrados: "
   if (topicsDone)
-    tecnicalContent+= topicsDone + ". No se debe registrar una respuesta para estos temas."
+    tecnicalContent+= topicsDone + ". Solo se debe volver a registrar los temas ya registrados si el usuario proporciona información adicional, haz un resumen sobre el tema en cuestión en base a la conversación."
   else tecnicalContent+= "NINGUNO."
 
   tecnicalContent+= "\nTemas que aún no se registraron: "
@@ -288,7 +309,7 @@ export function getFinalSystemMessage(topicResponses: TopicResponseDAO[], topics
     tecnicalContent+= topicsUndone + "."
   else tecnicalContent+= "NINGUNO."
 
-  tecnicalContent+= "\nImportante: Debes invocar la función 'registrarRespuestas' solo para los temas que aún no se registraron."
+//  tecnicalContent+= "\nImportante: Debes invocar la función 'registrarRespuestas' solo para los temas que aún no se registraron."
 
   const content= "\n" + tecnicalContent
 
@@ -318,12 +339,13 @@ export function getSystemMessageForSocialExperiment() {
   
 }
 
-function createMessage(conversationId: string, role: string, content: string) {
+function createMessage(conversationId: string, role: string, content: string, name?: string) {
   const created= prisma.message.create({
     data: {
       role,
       content,
       conversationId,
+      name
     }
   })
 

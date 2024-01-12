@@ -74,13 +74,14 @@ model Client {
 
 
 model Conversation {
-  id          String   @id @default(cuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  phone       String
-  messages    Message[]
-  client      Client  @relation(fields: [clientId], references: [id], onDelete: NoAction)
-  clientId    String
+  id            String   @id @default(cuid())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  phone           String
+  messages        Message[]
+  client          Client  @relation(fields: [clientId], references: [id], onDelete: NoAction)
+  clientId        String
+  topicResponses TopicResponse[]
 }
 
 model Message {
@@ -88,6 +89,7 @@ model Message {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   role           String
+  name           String?
   content        String      @db.Text
   conversationId String
   conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
@@ -115,4 +117,6 @@ model TopicResponse {
   gravedad          Int       @default(0)           // gennext: skip.zod show.column
   topic             Topic     @relation(fields: [topicId], references: [id], onDelete: Cascade)
   topicId           String
+  conversation      Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  conversationId    String
 }

@@ -1,8 +1,8 @@
 "use server"
   
+import { getActiveConversation } from "@/services/conversationService"
+import { TopicResponseDAO, TopicResponseFormValues, createTopicResponse, deleteTopicResponse, getTopicResponseDAO, getActiveTopicResponsesDAOByPhone, updateTopicResponse, getTopicResponseDAOByConversationAndTopicId } from "@/services/topicresponse-services"
 import { revalidatePath } from "next/cache"
-import { getCurrentUser } from "@/lib/auth"
-import { TopicResponseDAO, createTopicResponse, updateTopicResponse, deleteTopicResponse, TopicResponseFormValues, getTopicResponsesDAOByPhone, getTopicResponsesDAO, getTopicResponseDAO, getTopicResponseDAOByPhoneAndTopicId } from "@/services/topicresponse-services"
 
 
 export async function getTopicResponseDAOAction(id: string): Promise<TopicResponseDAO | null> {
@@ -25,8 +25,13 @@ export async function createOrUpdateTopicResponseAction(id: string | null, data:
 }
 
 export async function createOrUpdateTopicResponseFromFunctions(data: TopicResponseFormValues): Promise<boolean | null> {
+    const RAFFO_CLIENT_ID= process.env.RAFFO_CLIENT_ID
+    if (!RAFFO_CLIENT_ID) throw new Error("RAFFO_CLIENT_ID not found")
     const phone= data.phone
-    const found= await getTopicResponseDAOByPhoneAndTopicId(phone, data.topicId)
+    const activeConversation= await getActiveConversation(phone, RAFFO_CLIENT_ID)
+    if (!activeConversation) return false
+    
+    const found= await getTopicResponseDAOByConversationAndTopicId(activeConversation.id, data.topicId)
     let updated= null
     if (!found) {
         updated= await createTopicResponse(data)
@@ -40,16 +45,18 @@ export async function createOrUpdateTopicResponseFromFunctions(data: TopicRespon
 }
 
 export async function getTopicResponsesDAOByPhoneAction(phone: string): Promise<TopicResponseDAO[]> {
-    const found= await getTopicResponsesDAOByPhone(phone)
+    const found= await getActiveTopicResponsesDAOByPhone(phone)
     return found as TopicResponseDAO[]
 }
 
-export async function deleteTopicResponseAction(id: string): Promise<TopicResponseDAO | null> {    
+export async function deleteTopicResponseAction(id: string): Promise<boolean> {    
     const deleted= await deleteTopicResponse(id)
+
+    if (!deleted) return false
 
     revalidatePath("/admin/topicResponses")
     revalidatePath("/admin/chat")
 
-    return deleted as TopicResponseDAO
+    return true
 }
 

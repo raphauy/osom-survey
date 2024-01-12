@@ -14,7 +14,7 @@ export default async function Menu() {
             <div className="flex">
                 <div className="flex">
                     <MenuAdmin />
-                    {/* <MenuOsom /> */}
+                    <MenuOsom />
                 </div>
             </div>
         )

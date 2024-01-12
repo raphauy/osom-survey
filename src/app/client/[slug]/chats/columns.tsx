@@ -38,8 +38,8 @@ export const columns: ColumnDef<DataConversation>[] = [
       return (
         <div className="flex items-center justify-start flex-1">
           <Link href={`/client/${data.clienteSlug}/chats/${data.id}`}>
-              <Button variant="link" className="pl-0 dark:text-white">
-                {data.celular}
+              <Button variant="link" className="pl-0 dark:text-white">                
+                {data.celular.substring(0, 13)}
               </Button>
           </Link>
         </div>

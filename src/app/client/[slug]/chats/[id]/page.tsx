@@ -1,9 +1,10 @@
 import { getCurrentUser } from "@/lib/auth"
-import clsx from "clsx"
-import { Bot, User } from "lucide-react"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
-import { getDataConversation } from "../actions"
+import { getConversation } from "@/services/conversationService"
+import { getTopicsDAO } from "@/services/topic-services"
+import { getActiveTopicResponsesDAOByConversationId } from "@/services/topicresponse-services"
+import { format } from "date-fns"
+import { utcToZonedTime } from "date-fns-tz"
+import ConversationBox from "./conversation-box"
 
 interface Props {
     params: {
@@ -13,72 +14,33 @@ interface Props {
   
 export default async function ChatPage({ params: { id } }: Props) {
 
-    const user= await getCurrentUser()
-
-    const conversation= await getDataConversation(id)
+    const conversation= await getConversation(id)
     if (!conversation) return <div>Chat no encontrado</div>
 
-    const transformedMessages= conversation.messages.map(message => {
-        if (message.content.includes("**")) return message
-        if (message.content.includes("*")) {
-            const newContent= message.content.replace(/\*/g, "**")
-            return {...message, content: newContent}
-        }
-        
-        return message
-    })
+    const fecha= utcToZonedTime(conversation.createdAt, 'America/Montevideo')
+    let fechaStr= ""
+    const today= utcToZonedTime(new Date(), 'America/Montevideo')
+    if (fecha.getDate() === today.getDate() && fecha.getMonth() === today.getMonth() && fecha.getFullYear() === today.getFullYear()) {
+      fechaStr= format(fecha, "HH:mm")
+    } else {
+      fechaStr= format(fecha, "yyyy/MM/dd")
+    }
 
-    const similarityThreshold: number= parseFloat(process.env.SIMILARITY_THRESHOLD || "0.5")
+    const messages= conversation.messages
+    const topicResponses= await getActiveTopicResponsesDAOByConversationId(conversation.id)
+
+    const topics= await getTopicsDAO()
 
     return (
         <main className="flex flex-col items-center justify-between w-full p-3 border-l">
           <div className="w-full pb-2 text-center border-b">
-            <p className="text-lg font-bold">{conversation.celular} ({conversation.fecha})</p>
-          </div>  
-          {
-            transformedMessages.map((message, i) => (
-              <div key={i} className="w-full">
-                <div className={clsx(
-                    "flex w-full items-center justify-center border-b border-gray-200 py-5",
-                    message.role === "user" ? "bg-white" : "bg-gray-100",
-                  )}
-                >
-                  <div className="flex items-center w-full max-w-screen-md px-5 space-x-4 sm:px-0">
-                    <div className="flex flex-col">
-                      <div
-                          className={clsx(
-                          "p-1.5 text-white",
-                          message.role === "assistant" ? "bg-green-500" : "bg-black",
-                          )}
-                      >
-                          {message.role === "user" ? (
-                          <User width={20} />
-                          ) : (
-                          <Bot width={20} />
-                          )}                    
-                      </div>
-                      <p className="text-sm">{message.fecha}</p>
-                    </div>
-                    <ReactMarkdown
-                          className="w-full prose break-words prose-p:leading-relaxed"
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                          // open links in new tab
-                          a: (props) => (
-                              <a {...props} target="_blank" rel="noopener noreferrer" />
-                          ),
-                          }}
-                      >
-                          {message.content}
-                      </ReactMarkdown>
-                  </div>
-                </div>                
-              </div>
+            <p className="text-lg font-bold">{conversation.phone} ({fechaStr})</p>
+          </div>
 
-            ))
-          }        
-          
-    
+          {/** @ts-ignore */}
+          <ConversationBox messages={messages} topics={topics} responses={topicResponses} />
+
+      
         </main>
       );
     }

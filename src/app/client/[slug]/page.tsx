@@ -40,7 +40,7 @@ export default async function ClientPage({ params: { slug } }: Props) {
           <Link href={`/client/${slug}/chats`}>
             <Card className="w-64">
               <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                <CardTitle className="text-sm font-medium">Chats</CardTitle>
+                <CardTitle className="text-sm font-medium">Conversaciones</CardTitle>
                 <MessageCircle className="text-gray-500" size={20} />
               </CardHeader>
               <CardContent>

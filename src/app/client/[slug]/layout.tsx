@@ -1,9 +1,9 @@
 import { getCurrentUser } from "@/lib/auth";
-import SideBar from "./sideBar";
 import NotAlowedPage from "@/app/(auth)/unauthorized/page";
 import { getDataClientBySlug, getDataClientOfUser } from "@/app/admin/clients/(crud)/actions";
 import { getClientBySlug } from "@/services/clientService";
 import { redirect } from "next/navigation";
+import SideBar from "./side-bar";
 
 interface Props {
   children: React.ReactNode
@@ -32,7 +32,7 @@ export default async function AdminLayout({ children, params }: Props) {
 
   return (
     <>
-      <div className="container flex flex-grow w-full">
+      <div className="flex flex-grow w-full">
         <SideBar slug={slug} />
         <div className="flex flex-col items-center flex-grow p-1">{children}</div>
       </div>

@@ -1,7 +1,9 @@
 import * as z from "zod"
 import { prisma } from "@/lib/db"
-import { TopicDAO } from "./topic-services"
+import { TopicDAO, getTopicDAO } from "./topic-services"
 import { revalidatePath } from "next/cache"
+import { getActiveConversation } from "./conversationService"
+//import { getActiveConversation } from "./conversationService"
 
 export type TopicResponseDAO = {
 	id: string
@@ -50,10 +52,17 @@ export async function getTopicResponsesDAO() {
   return res
 }
 
-export async function getTopicResponsesDAOByPhone(phone: string) {
+export async function getActiveTopicResponsesDAOByPhone(phone: string) {
+  const RAFFO_CLIENT_ID= process.env.RAFFO_CLIENT_ID
+  if (!RAFFO_CLIENT_ID) throw new Error("RAFFO_CLIENT_ID not found")
+
+  const activeConversation= await getActiveConversation(phone, RAFFO_CLIENT_ID)
+  if (!activeConversation) return [] as TopicResponseDAO[]
+
   const found = await prisma.topicResponse.findMany({
     where: {
-      phone
+      phone,
+      conversationId: activeConversation.id,
     },
     include: {
       topic: true,
@@ -76,10 +85,36 @@ export async function getTopicResponsesDAOByPhone(phone: string) {
   return res
 }
 
-export async function getTopicResponseDAOByPhoneAndTopicId(phone: string, topicId: string) {
+export async function getActiveTopicResponsesDAOByConversationId(conversationId: string) {
+  const found = await prisma.topicResponse.findMany({
+    where: {
+      conversationId,
+    },
+    include: {
+      topic: true,
+    },
+    orderBy: {
+      createdAt: 'asc'
+    },
+  })
+  const res= found.map((topicResponse) => {
+    return {
+      ...topicResponse,
+      topic: {
+        ...topicResponse.topic,
+        enabledStr: topicResponse.topic.enabled ? "si" : "no"
+      },
+      topicName: topicResponse.topic.name
+    }
+  })
+
+  return res
+}
+
+export async function getTopicResponseDAOByConversationAndTopicId(conversationId: string, topicId: string) {
   const found = await prisma.topicResponse.findFirst({
     where: {
-      phone,
+      conversationId,
       topicId
     },
     include: {
@@ -124,11 +159,27 @@ export async function getTopicResponseDAO(id: string) {
 }
     
 export async function createTopicResponse(data: TopicResponseFormValues) {
-  const created = await prisma.topicResponse.create({
-    data
-  })
-  return created
+  const topic= await getTopicDAO(data.topicId)
+  if (!topic) return null
+
+  const activeConversation= await getActiveConversation(data.phone, topic.clientId)
+  if (activeConversation) {
+    const created = await prisma.topicResponse.create({
+      data: {
+        ...data,
+        conversationId: activeConversation.id,
+      },
+    })
+    return created
+  
+  } else {
+    console.log("createTopicResponse: activeConversation not found")    
+  }
+
+  return null
 }
+
+
 
 export async function updateTopicResponse(id: string, data: TopicResponseFormValues) {
   const updated = await prisma.topicResponse.update({
