@@ -31,11 +31,11 @@ export const functions= [
         },
         respuestaPlanteo: {
           type: "string",
-          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado.El texto de este parámetro debe respetar los tildes del español."
+          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado. El texto de este parámetro debe incluir secuencias de escape Unicode para caracteres especiales, como tildes y eñes. Por ejemplo, usar '\\u00e1' en lugar de 'á'."
         },
         respuestaSolucion: {
           type: "string",
-          description: "respuesta del usuario referente a la solución del problema planteado anteriormente. El texto de este parámetro debe respetar los tildes del español."
+          description: "respuesta del usuario referente a la solución del problema planteado anteriormente. El texto de este parámetro debe incluir secuencias de escape Unicode para caracteres especiales, como tildes y eñes. Por ejemplo, usar '\\u00e1' en lugar de 'á'."
         },
         evaluacionDeIA: {
           type: "string",

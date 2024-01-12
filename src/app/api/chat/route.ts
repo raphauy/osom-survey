@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         //model: "gpt-3.5-turbo-0613",
         model: "gpt-4-1106-preview",
         stream: true,
-        messages: [...messages, ...newMessages],
+        messages: [...messages, ...newMessages],        
       });
     },
     // onStart: async () => {
