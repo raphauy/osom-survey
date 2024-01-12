@@ -35,8 +35,10 @@ export default function ConversationBox( { messages, responses, topics }: Props 
 
             <div className="flex flex-col items-center w-full pb-40">
                 {messages.length > 0 ? (
+
                     messages.map((message, i) => (
-                    <div key={i} className={cn("flex text-gray-800 w-full items-center border-b border-gray-200 py-2 px-5 mr-3",
+                        message.role === "function" ? null :
+                        <div key={i} className={cn("flex text-gray-800 w-full items-center border-b border-gray-200 py-2 px-5 mr-3",
                         message.role === "user" ? "bg-white" : "bg-gray-100")}>
                             
                         <div className="flex items-center w-full mx-5 space-x-4">
