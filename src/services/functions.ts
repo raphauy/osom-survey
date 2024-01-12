@@ -31,11 +31,11 @@ export const functions= [
         },
         respuestaPlanteo: {
           type: "string",
-          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado."
+          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado.El texto de este parámetro debe respetar los tildes del español."
         },
         respuestaSolucion: {
           type: "string",
-          description: "respuesta del usuario referente a la solución del problema planteado anteriormente."
+          description: "respuesta del usuario referente a la solución del problema planteado anteriormente. El texto de este parámetro debe respetar los tildes del español."
         },
         evaluacionDeIA: {
           type: "string",
@@ -90,24 +90,24 @@ export async function registrarRespuestas(tema: string, respuestaPlanteo: string
   return response
 }
 
-type UnicodeReplacements = {
-  [key: string]: string;
-};
-
-function decodeUnicode(str: string): string {
-  const replacements: UnicodeReplacements = {
-    '\\u00e1': 'á', '\\u00c1': 'Á', // á, Á
-    '\\u00e9': 'é', '\\u00c9': 'É', // é, É
-    '\\u00ed': 'í', '\\u00cd': 'Í', // í, Í
-    '\\u00f3': 'ó', '\\u00d3': 'Ó', // ó, Ó
-    '\\u00fa': 'ú', '\\u00da': 'Ú', // ú, Ú
-    '\\u00f1': 'ñ', '\\u00d1': 'Ñ', // ñ, Ñ
-    '\\u00fc': 'ü', '\\u00dc': 'Ü'  // ü, Ü
+function decodeUnicode(text: string): string {
+  const reemplazos: { [key: string]: string } = {
+    '\\u00e1': 'á', // á
+    '\\u00e9': 'é', // é
+    '\\u00ed': 'í', // í
+    '\\u00f3': 'ó', // ó
+    '\\u00fa': 'ú', // ú
+    '\\u00f1': 'ñ', // ñ
+    '\\u00c1': 'Á', // Á
+    '\\u00c9': 'É', // É
+    '\\u00cd': 'Í', // Í
+    '\\u00d3': 'Ó', // Ó
+    '\\u00da': 'Ú', // Ú
+    '\\u00d1': 'Ñ', // Ñ
+    // Agrega más reemplazos si son necesarios
   };
 
-  return str.replace(/\\u[\dA-F]{4}/gi, function (match) {
-    return replacements[match] || match;
-  });
+  return text.replace(/\\u00e1|\\u00e9|\\u00ed|\\u00f3|\\u00fa|\\u00f1|\\u00c1|\\u00c9|\\u00cd|\\u00d3|\\u00da|\\u00d1/g, (match) => reemplazos[match]);
 }
 
 
