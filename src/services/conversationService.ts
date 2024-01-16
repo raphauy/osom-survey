@@ -5,6 +5,7 @@ import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam, ChatCompl
 import { functions, obtenerInstrucciones, registrarRespuestas } from "./functions";
 import { TopicResponseDAO, getActiveTopicResponsesDAOByPhone } from "./topicresponse-services";
 import { TopicDAO, getTopicsDAO } from "./topic-services";
+import { sendWapMessage } from "./osomService";
 
 export default async function getConversations() {
 
@@ -249,7 +250,7 @@ export async function processMessage(id: string) {
   if (assistantResponse) {
     await messageArrived(conversation.phone, assistantResponse, conversation.clientId, "assistant")
     console.log("message stored")
-//    sendWapMessage(conversation.phone, assistantResponse, notificarAgente, conversation.clientId)
+    sendWapMessage(conversation.phone, assistantResponse, false, conversation.clientId)
   } else {
     console.log("assistantResponse is null")
   }   
