@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db";
-
 import { OpenAI } from "openai";
-import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from "openai/resources/index.mjs";
+import { ChatCompletionFunctionMessageParam, ChatCompletionMessageParam, ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from "openai/resources/index.mjs";
 import { functions, obtenerInstrucciones, registrarRespuestas } from "./functions";
 import { TopicResponseDAO, getActiveTopicResponsesDAOByPhone } from "./topicresponse-services";
 import { TopicDAO, getTopicsDAO } from "./topic-services";
@@ -154,7 +153,7 @@ export async function processMessage(id: string) {
   
   //const messages= getGPTMessages(conversation.messages as ChatCompletionMessageParam[])
   if (!conversation.client.prompt) throw new Error("Client not found")
-  const messages: ChatCompletionMessageParam[]= getGPTMessages(conversation.messages as ChatCompletionUserOrSystem[], conversation.client.prompt, conversation.phone)
+  const messages: ChatCompletionMessageParam[]= getGPTMessages(conversation.messages as ChatCompletionUserOrSystemOrFunction[], conversation.client.prompt, conversation.phone)
 
   const topicsResponses= await getActiveTopicResponsesDAOByPhone(conversation.phone)
   const topics= await getTopicsDAO()
@@ -258,15 +257,15 @@ export async function processMessage(id: string) {
   
 }
 
-type ChatCompletionUserOrSystem= ChatCompletionUserMessageParam | ChatCompletionSystemMessageParam
+type ChatCompletionUserOrSystemOrFunction= ChatCompletionUserMessageParam | ChatCompletionSystemMessageParam | ChatCompletionFunctionMessageParam
 
 //function getGPTMessages(messages: (ChatCompletionUserMessageParam | ChatCompletionSystemMessageParam)[], clientPrompt: string) {
-function getGPTMessages(messages: ChatCompletionUserOrSystem[], clientPrompt: string, topicsDone: string) {
+function getGPTMessages(messages: ChatCompletionUserOrSystemOrFunction[], clientPrompt: string, topicsDone: string) {
 
   const systemPrompt= getSystemMessage(clientPrompt)
 
   // const gptMessages: ChatCompletionMessageParam[]= [systemPrompt]
-  const gptMessages: ChatCompletionUserOrSystem[]= [systemPrompt]
+  const gptMessages: ChatCompletionUserOrSystemOrFunction[]= [systemPrompt]
   for (const message of messages) {
     let content= message.content
     if (Array.isArray(content)) {
@@ -275,9 +274,11 @@ function getGPTMessages(messages: ChatCompletionUserOrSystem[], clientPrompt: st
       content= ""
     }
 
+    // @ts-ignore
     gptMessages.push({
       role: message.role,
-      content
+      content,
+      name: message.name ? message.name : undefined
     })
   }
   return gptMessages

@@ -7,6 +7,7 @@ production.Dockerfile
 production.Dockerfile.bak
 bun.lockb
 /sql/delete_tables.sh
+osomsurvey_ejemplo.json
 
 # dependencies
 /node_modules
