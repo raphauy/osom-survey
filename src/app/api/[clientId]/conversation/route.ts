@@ -1,4 +1,5 @@
 import { messageArrived, processMessage } from "@/services/conversationService";
+import { MessageDelayResponse, onMessageReceived, processDelayedMessage } from "@/services/messageDelayService";
 import { NextResponse } from "next/server";
 
 
@@ -32,10 +33,26 @@ export async function POST(request: Request, { params }: { params: { clientId: s
         console.log("phone: ", phone)
         console.log("text: ", text)
 
-        const messageStored= await messageArrived(phone, text, clientId, "user")
-        console.log("message stored")
-        
-        processMessage(messageStored.id)
+        // const messageStored= await messageArrived(phone, text, clientId, "user")
+        // console.log("message stored")        
+        // processMessage(messageStored.id)
+
+        const delayResponse: MessageDelayResponse= await onMessageReceived(phone, text, clientId, "user", "")
+        console.log(`delayResponse wasCreated: ${delayResponse.wasCreated}`)
+        console.log(`delayResponse message: ${delayResponse.message ? delayResponse.message.id : "null"}`)
+
+        if (delayResponse.wasCreated ) {
+            if (delayResponse.message) {
+                processDelayedMessage(delayResponse.message.id, phone)
+                
+            } else {
+                console.log("delayResponse.message wasCreated but is null")
+                return NextResponse.json({ error: "there was an error processing the message" }, { status: 502 })
+            }
+        } else {
+            console.log(`message from ${phone} was updated, not processed`)
+        }        
+
 
         return NextResponse.json({ data: "ACK" }, { status: 200 })
 

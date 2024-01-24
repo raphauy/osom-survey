@@ -49,7 +49,7 @@ export default function ConversationBox( { messages, responses, topics }: Props 
                             <Bot width={20} />
                             )}
                         </div>
-                        <div>
+                        <div className="whitespace-pre-line">
                         {message.content}
                         </div>
                         </div>            

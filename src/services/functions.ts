@@ -30,7 +30,7 @@ export const functions= [
         },
         respuestaPlanteo: {
           type: "string",
-          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado. El texto de este parámetro debe incluir secuencias de escape Unicode para caracteres especiales, como tildes y eñes. Por ejemplo, usar '\\u00e1' en lugar de 'á'."
+          description: "respuesta del usuario referente al planteo de un problema sobre el tema seleccionado, debes resumir la respuesta a un concepto como 'Falta de empleo', 'Poca de seguridad', 'Basura en las calles', 'Ruidos molestos', etc. El texto de este parámetro debe incluir secuencias de escape Unicode para caracteres especiales, como tildes y eñes. Por ejemplo, usar '\\u00e1' en lugar de 'á'."
         },
         respuestaSolucion: {
           type: "string",

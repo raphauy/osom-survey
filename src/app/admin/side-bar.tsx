@@ -88,7 +88,11 @@ export default function SideBar() {
         
         <Link href="/admin/config" className="flex items-center gap-2 py-1 mx-2 rounded hover:bg-gray-200 dark:hover:text-black">
           <Settings />
-          <p className={cn("hidden", !isChatPage && "md:block md:w-36")}>Config</p>                  
+          <p className={cn("hidden", !isChatPage && "md:block md:w-36")}>Config. Cliente</p>                  
+        </Link>
+        <Link href="/admin/configs" className="flex items-center gap-2 py-1 mx-2 rounded hover:bg-gray-200 dark:hover:text-black">
+          <Settings />
+          <p className={cn("hidden", !isChatPage && "md:block md:w-36")}>Config. Global</p>                  
         </Link>
       </section>
     </div>
