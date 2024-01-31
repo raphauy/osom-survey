@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress"
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
+import { SurveyDAO } from "@/services/survey-services"
 import { TopicDAO } from "@/services/topic-services"
 import { TopicResponseDAO } from "@/services/topicresponse-services"
 import { Message } from "ai"
@@ -15,10 +16,9 @@ type Props = {
     messages: Message[]
     responses: TopicResponseDAO[]
     topics: TopicDAO[]
+    survey: SurveyDAO
 }
-export default function ConversationBox( { messages, responses, topics }: Props ) {
-    const formRef = useRef<HTMLFormElement>(null)
-    const inputRef = useRef<HTMLTextAreaElement>(null)
+export default function ConversationBox( { messages, responses, topics, survey }: Props ) {
 
     const totalTopics= topics?.length
     const topicsWithoutResponses= topics?.filter((topic) => !responses?.find((response) => response.topic.id === topic.id))
@@ -69,6 +69,67 @@ export default function ConversationBox( { messages, responses, topics }: Props 
             className='flex flex-col items-center justify-between overflow-y-auto'
             >
             <div className='hidden w-full px-2 py-2 lg:px-3 md:block'>
+            {
+                survey && 
+                <Card className="w-full mt-1">
+                    <CardHeader>
+                        <CardTitle className="text-green-700">Identificación política</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Voto partido</p>
+                                <p className="text-sm text-muted-foreground">{survey.votoPartido}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Preferencia Partido</p>
+                                <p className="text-sm text-muted-foreground">{survey.preferenciaPartido}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Candidato Preferencia</p>
+                                <p className="text-sm text-muted-foreground">{survey.candidatoPreferencia}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Candidato Interno Preferencia</p>
+                                <p className="text-sm text-muted-foreground">{survey.candidatoInternoPreferencia}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Medios de Informacion</p>
+                                <p className="text-sm text-muted-foreground">{survey.mediosInformacion}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Edad</p>
+                                <p className="text-sm text-muted-foreground">{survey.edad}</p>
+                            </div>
+                        </div>
+                        <div className="mb-1 grid grid-cols-[25px_1fr] items-start last:mb-0 last:pb-0 space-y-1">
+                            <span className="flex w-2 h-2 mt-0.5 translate-y-1 bg-green-700 rounded-full" />
+                            <div className="space-y-1">
+                                <p className="text-sm font-medium leading-none">Departamento de Residencia</p>
+                                <p className="text-sm text-muted-foreground">{survey.departamentoResidencia}</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+            }
+
             {responses?.map((response) => (
                 <Card className="w-full mt-1" key={response.id}>
                     <CardHeader>
@@ -76,7 +137,7 @@ export default function ConversationBox( { messages, responses, topics }: Props 
                     </CardHeader>
                     <CardContent>
                         <div className="mb-1 grid grid-cols-[25px_1fr] items-start pb-3 last:mb-0 last:pb-0 space-y-1">
-                        <span className="flex w-2 h-2 translate-y-1 rounded-full bg-osom-color" />
+                        <span className="flex w-2 h-2 mt-0.5 translate-y-1 rounded-full bg-osom-color" />
                         <div className="space-y-1">
                             <p className="text-sm font-medium leading-none">Planteo del problema</p>
                             <p className="text-sm text-muted-foreground">{response.respuestaPlanteo}</p>

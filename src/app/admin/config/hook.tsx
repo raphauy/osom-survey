@@ -18,6 +18,7 @@ export default function Hook({ basePath }: Props) {
     const [value, copy] = useCopyToClipboard()
     const [client, setClient] = useState<DataClient>()
     const [hook, setHook] = useState(`${basePath}/api/${client?.id}/conversation`)
+    const [hookPoliticIdentification, setHookPoliticIdentification] = useState(`${basePath}/api/${client?.id}/identificacionpolitica`)
     const [endPoint, setEndPoint] = useState("No configurado")
     const searchParams= useSearchParams()
 
@@ -31,6 +32,7 @@ export default function Hook({ basePath }: Props) {
             setClient(data)
             data.whatsAppEndpoint && setEndPoint(data.whatsAppEndpoint)
             setHook(`${basePath}/api/${data.id}/conversation`)
+            setHookPoliticIdentification(`${basePath}/api/${data.id}/identificacionpolitica`)
         })
 
        
@@ -47,17 +49,27 @@ export default function Hook({ basePath }: Props) {
         toast({title: "Endpoint copiado" })
     }
 
+    function copyPoliticaIdentificationToClipboard(){
+        copy(hookPoliticIdentification)
+        toast({title: "Hook identificación copiado" })
+    }
+
     const editTrigger= (<Edit size={30} className="pr-2 hover:cursor-pointer"/>)
 
     return (
         <div className="w-full p-4 border rounded-lg">
             <p className="text-2xl font-bold">Hooks ({client?.nombre})</p>
-            <div className="flex items-end gap-4 pb-3 mb-3 border-b">
-                <p className="mt-5"><strong>Entrante</strong>: {hook}</p>
+            <div className="flex items-end gap-4 pb-3 border-b">
+                <p className="mt-5"><strong>Entrante Mensajes</strong>: {hook}</p>
                 <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyHookToClipboard} /></Button>
             </div>
 
-            <div className="flex items-center gap-4 pb-3 mb-3 border-b">
+            <div className="flex items-end gap-4 pb-3 mb-3 border-b">
+                <p className="mt-5"><strong>Entrante Id. Política</strong>: {hookPoliticIdentification}</p>
+                <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyPoliticaIdentificationToClipboard} /></Button>
+            </div>
+
+            <div className="flex items-center gap-4 pb-3 mt-10 mb-3 border-b">
                 <p><strong>Saliente</strong>: {endPoint}</p>
                 <EndpointDialog update={updateEndpoint} title="Configurar WhatsApp Endpoint" trigger={editTrigger} id={client?.id || ""} />
                 <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyEndPointToClipboard} /></Button>

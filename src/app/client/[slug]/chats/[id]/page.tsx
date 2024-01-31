@@ -38,7 +38,7 @@ export default async function ChatPage({ params: { id } }: Props) {
           </div>
 
           {/** @ts-ignore */}
-          <ConversationBox messages={messages} topics={topics} responses={topicResponses} />
+          <ConversationBox messages={messages} topics={topics} responses={topicResponses} survey={conversation.survey} />
 
       
         </main>

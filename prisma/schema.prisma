@@ -57,6 +57,14 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Config {
+  id             String       @id @default(cuid())
+  name           String       @unique
+  value          String?      @db.Text
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt  
+}
+
 model Client {
   id                String   @id @default(cuid())
   name              String
@@ -79,9 +87,11 @@ model Conversation {
   updatedAt       DateTime @updatedAt
   phone           String
   messages        Message[]
+  topicResponses TopicResponse[]
   client          Client  @relation(fields: [clientId], references: [id], onDelete: NoAction)
   clientId        String
-  topicResponses TopicResponse[]
+  survey          Survey? @relation(fields: [surveyId], references: [id], onDelete: NoAction)
+  surveyId        String?
 }
 
 model Message {
@@ -121,10 +131,17 @@ model TopicResponse {
   conversationId    String
 }
 
-model Config {
-  id             String       @id @default(cuid())
-  name           String       @unique
-  value          String?      @db.Text
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt  
+model Survey {
+  id                          String    @id @default(cuid())
+  phone                       String    @unique
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+  votoPartido                 String?
+  preferenciaPartido          String?
+  candidatoPreferencia        String?
+  candidatoInternoPreferencia String?
+  mediosInformacion           String?
+  edad                        String?
+  departamentoResidencia      String?
+  conversations               Conversation[]
 }

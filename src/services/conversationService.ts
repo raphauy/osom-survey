@@ -98,6 +98,7 @@ export async function getConversation(id: string) {
           createdAt: 'asc',
         },
       },
+      survey: true
     },
   })
 

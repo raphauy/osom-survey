@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-import { Briefcase, ChevronRightSquare, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, User } from "lucide-react";
+import { Briefcase, ChevronRightSquare, ClipboardList, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -49,6 +49,11 @@ const data= [
     href: "/admin/chat",
     icon: MessageCircle,
     text: "Simulador"
+  },
+  {
+    href: "/admin/surveys",
+    icon: ClipboardList,
+    text: "Encuestas"
   },
 ]
 
