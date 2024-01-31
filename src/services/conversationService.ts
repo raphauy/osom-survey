@@ -35,6 +35,15 @@ export async function getConversationsOfClient(clientId: string) {
     }
   })
 
+  // order the conversations by the last message date
+  found.sort((a, b) => {
+    if (a.messages.length === 0) return -1
+    if (b.messages.length === 0) return 1
+    const lastMessageA= a.messages[a.messages.length - 1]
+    const lastMessageB= b.messages[b.messages.length - 1]
+    return lastMessageB.createdAt.getTime() - lastMessageA.createdAt.getTime()
+  })
+
   return found;
 }
 
