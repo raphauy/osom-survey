@@ -19,6 +19,7 @@ export default function Hook({ basePath }: Props) {
     const [client, setClient] = useState<DataClient>()
     const [hook, setHook] = useState(`${basePath}/api/${client?.id}/conversation`)
     const [hookPoliticIdentification, setHookPoliticIdentification] = useState(`${basePath}/api/${client?.id}/identificacionpolitica`)
+    const [hookAllData, setHookAllData] = useState(`${basePath}/api/${client?.id}/getalldata`)
     const [endPoint, setEndPoint] = useState("No configurado")
     const searchParams= useSearchParams()
 
@@ -33,6 +34,7 @@ export default function Hook({ basePath }: Props) {
             data.whatsAppEndpoint && setEndPoint(data.whatsAppEndpoint)
             setHook(`${basePath}/api/${data.id}/conversation`)
             setHookPoliticIdentification(`${basePath}/api/${data.id}/identificacionpolitica`)
+            setHookAllData(`${basePath}/api/${data.id}/getalldata`)
         })
 
        
@@ -54,6 +56,11 @@ export default function Hook({ basePath }: Props) {
         toast({title: "Hook identificación copiado" })
     }
 
+    function copyAllDataToClipboard(){
+        copy(hookAllData)
+        toast({title: "Hook getalldata copiado" })
+    }
+
     const editTrigger= (<Edit size={30} className="pr-2 hover:cursor-pointer"/>)
 
     return (
@@ -64,12 +71,17 @@ export default function Hook({ basePath }: Props) {
                 <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyHookToClipboard} /></Button>
             </div>
 
-            <div className="flex items-end gap-4 pb-3 mb-3 border-b">
+            <div className="flex items-end gap-4 pb-3 border-b">
                 <p className="mt-5"><strong>Entrante Id. Política</strong>: {hookPoliticIdentification}</p>
                 <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyPoliticaIdentificationToClipboard} /></Button>
             </div>
 
-            <div className="flex items-center gap-4 pb-3 mt-10 mb-3 border-b">
+            <div className="flex items-end gap-4 pb-3 border-b">
+                <p className="mt-5"><strong>Obtener todos los datos</strong>: {hookAllData}</p>
+                <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyAllDataToClipboard} /></Button>
+            </div>
+
+            <div className="flex items-center gap-4 pb-3 mb-3 border-b mt-14">
                 <p><strong>Saliente</strong>: {endPoint}</p>
                 <EndpointDialog update={updateEndpoint} title="Configurar WhatsApp Endpoint" trigger={editTrigger} id={client?.id || ""} />
                 <Button variant="ghost" className="p-1 h-7"><Copy onClick={copyEndPointToClipboard} /></Button>

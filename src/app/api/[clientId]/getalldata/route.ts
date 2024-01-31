@@ -1,6 +1,6 @@
 import { messageArrived, processMessage } from "@/services/conversationService";
 import { MessageDelayResponse, onMessageReceived, processDelayedMessage } from "@/services/messageDelayService";
-import { SurveyFormValues, createOrUpdateSurvey } from "@/services/survey-services";
+import { SurveyFormValues, createOrUpdateSurvey, getSurveyAllData } from "@/services/survey-services";
 import { NextResponse } from "next/server";
 
 
@@ -27,30 +27,11 @@ export async function POST(request: Request, { params }: { params: { clientId: s
         }
         console.log("phone: ", phone)
 
-        const encuesta= message.encuesta
-        if (!encuesta) {
-            return NextResponse.json({ error: "encuesta is required" }, { status: 400 })
-        }
-        console.log("encuesta: ", encuesta)
+        const allData= await getSurveyAllData(phone)
+        console.log("allData: ", allData)
 
-        const surveyFormData: SurveyFormValues = {
-            phone: phone,
-            idcrm: message.idcrm,
-            votoPartido: encuesta.pregunta_1.voto_partido,
-            preferenciaPartido: encuesta.pregunta_2.preferencia_partido,
-            candidatoPreferencia: encuesta.pregunta_3.candidato_preferencia,
-            candidatoInternoPreferencia: encuesta.pregunta_4.candidato_interno_preferencia,
-            mediosInformacion: encuesta.pregunta_5.medios_informacion,
-            edad: encuesta.pregunta_6.edad,
-            departamentoResidencia: encuesta.pregunta_7.departamento_residencia,
-        }
 
-        const updated= await createOrUpdateSurvey(surveyFormData)
-        if (!updated) {
-            return NextResponse.json({ error: "error creating survey" }, { status: 502 })
-        }
-
-        return NextResponse.json({ data: "ACK" }, { status: 200 })
+        return NextResponse.json({ data: allData }, { status: 200 })
 
     } catch (error) {
         return NextResponse.json({ error: "error: " + error}, { status: 502 })        

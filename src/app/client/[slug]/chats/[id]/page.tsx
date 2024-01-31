@@ -5,6 +5,7 @@ import { getActiveTopicResponsesDAOByConversationId } from "@/services/topicresp
 import { format } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
 import ConversationBox from "./conversation-box"
+import { getSurveyDAOByPhone } from "@/services/survey-services"
 
 interface Props {
     params: {
@@ -31,6 +32,8 @@ export default async function ChatPage({ params: { id } }: Props) {
 
     const topics= await getTopicsDAO()
 
+    const survey= await getSurveyDAOByPhone(conversation.phone)
+
     return (
         <main className="flex flex-col items-center justify-between w-full p-3 border-l">
           <div className="w-full pb-2 text-center border-b">
@@ -38,7 +41,7 @@ export default async function ChatPage({ params: { id } }: Props) {
           </div>
 
           {/** @ts-ignore */}
-          <ConversationBox messages={messages} topics={topics} responses={topicResponses} survey={conversation.survey} />
+          <ConversationBox messages={messages} topics={topics} responses={topicResponses} survey={survey} />
 
       
         </main>

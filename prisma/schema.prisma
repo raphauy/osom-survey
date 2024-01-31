@@ -134,6 +134,7 @@ model TopicResponse {
 model Survey {
   id                          String    @id @default(cuid())
   phone                       String    @unique
+  idcrm                       String?
   createdAt                   DateTime  @default(now())
   updatedAt                   DateTime  @updatedAt
   votoPartido                 String?
