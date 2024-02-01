@@ -83,7 +83,7 @@ export async function registrarRespuestas(tema: string, respuestaPlanteo: string
   const created= await createOrUpdateTopicResponseFromFunctions(topicResponseData)
   if (!created) return "Error al registrar la respuesta"
 
-  const response= `Respuesta registrada para tema ${tema}. No hace falta decirle al usuario que la respuesta fue registrada. Simplemente preguntar al usuario si quiere tratar otro tema.`
+  const response= `Respuesta registrada para tema ${tema}. No hace falta decirle al usuario que la respuesta fue registrada. Si hay más temas a tratar preguntar al usuario si quiere tratar otro tema. Si no hay más temas a tratar finalizar con el mensaje final definido en el prompt sin preguntar si quiere tratar más temas.`
   console.log("\tresponse: " + response)  
 
   return response

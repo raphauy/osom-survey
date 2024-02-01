@@ -3,7 +3,7 @@ import { OpenAI } from "openai";
 import { ChatCompletionFunctionMessageParam, ChatCompletionMessageParam, ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from "openai/resources/index.mjs";
 import { functions, obtenerInstrucciones, registrarRespuestas } from "./functions";
 import { TopicResponseDAO, getActiveTopicResponsesDAOByPhone } from "./topicresponse-services";
-import { TopicDAO, getTopicsDAO } from "./topic-services";
+import { TopicDAO, getEnabledTopicsDAOByClient, getEnabledTopicsDAOBySlug, getTopicsDAO } from "./topic-services";
 import { sendWapMessage } from "./osomService";
 
 export default async function getConversations() {
@@ -167,7 +167,10 @@ export async function processMessage(id: string) {
   const messages: ChatCompletionMessageParam[]= getGPTMessages(conversation.messages as ChatCompletionUserOrSystemOrFunction[], conversation.client.prompt, conversation.phone)
 
   const topicsResponses= await getActiveTopicResponsesDAOByPhone(conversation.phone)
-  const topics= await getTopicsDAO()
+  //const topics= await getTopicsDAO()
+  const topics= await getEnabledTopicsDAOByClient(conversation.clientId)
+  console.log("topics: ", topics)
+  
   const topicsWithoutResponses= topics.filter(topic => !topicsResponses.find(topicResponse => topicResponse.topicId === topic.id))  
 
   const finalSystemMessage= getFinalSystemMessage(topicsResponses, topicsWithoutResponses)
@@ -321,8 +324,6 @@ export function getFinalSystemMessage(topicResponses: TopicResponseDAO[], topics
   if (topicsUndone)
     tecnicalContent+= topicsUndone + "."
   else tecnicalContent+= "NINGUNO."
-
-//  tecnicalContent+= "\nImportante: Debes invocar la función 'registrarRespuestas' solo para los temas que aún no se registraron."
 
   const content= "\n" + tecnicalContent
 

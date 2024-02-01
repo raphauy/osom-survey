@@ -15,7 +15,7 @@ export const columns: ColumnDef<DataConversation>[] = [
       return (
         <Button variant="ghost" className="pl-0 dark:text-white"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-          Creado
+          Act.
           <ArrowUpDown className="w-4 h-4 ml-1" />
         </Button>
       )

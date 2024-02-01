@@ -6,6 +6,7 @@ import { format } from "date-fns"
 import { utcToZonedTime } from "date-fns-tz"
 import ConversationBox from "./conversation-box"
 import { getSurveyDAOByPhone } from "@/services/survey-services"
+import { DeleteConversationDialog } from "./delete-dialogs"
 
 interface Props {
     params: {
@@ -36,8 +37,10 @@ export default async function ChatPage({ params: { id } }: Props) {
 
     return (
         <main className="flex flex-col items-center justify-between w-full p-3 border-l">
-          <div className="w-full pb-2 text-center border-b">
+          <div className="flex items-center justify-between w-full pb-2 text-center border-b">
+            <p></p>
             <p className="text-lg font-bold">{conversation.phone} ({fechaStr})</p>
+            <DeleteConversationDialog id={conversation.id} description={`Seguro que desea eliminar la conversación de ${conversation.phone}`} />
           </div>
 
           {/** @ts-ignore */}
