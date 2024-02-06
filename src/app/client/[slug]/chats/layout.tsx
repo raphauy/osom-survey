@@ -14,9 +14,12 @@ export default async function AdminLayout({ children, params }: Props) {
   const currentUser = await getCurrentUser()
   const slug = params.slug
 
-  if (currentUser?.role !== "admin") {
-    return redirect("/unauthorized?message=You are not authorized to access this page")
-  }
+//  if (currentUser?.role !== "admin") {
+//    return redirect("/unauthorized?message=You are not authorized to access this page")
+//  }
+
+  if (!currentUser) 
+    return redirect("/login?message=You need to login to access this page")
 
   let client= await getDataClientOfUser(currentUser.id)
   if (currentUser.role === "admin" || currentUser.role === "osom") {
