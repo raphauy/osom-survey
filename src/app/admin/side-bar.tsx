@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-import { Briefcase, ChevronRightSquare, ClipboardList, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, User } from "lucide-react";
+import { Briefcase, ChevronRightSquare, ClipboardList, Layers, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -17,7 +17,7 @@ const data= [
   {
     href: "/admin/users",
     icon: User,
-    text: "Users"
+    text: "Usuarios"
   },
   {
     href: "divider", icon: User
@@ -38,9 +38,9 @@ const data= [
     text: "Temas(Problemas)"
   },
   {
-    href: "/admin/topicresponses",
-    icon: ListOrdered,
-    text: "Respuestas"
+    href: "/admin/categories",
+    icon: Layers,
+    text: "Categorías"
   },
   {
     href: "divider", icon: User
@@ -54,6 +54,11 @@ const data= [
     href: "/admin/surveys",
     icon: ClipboardList,
     text: "Encuestas"
+  },
+  {
+    href: "/admin/topicresponses",
+    icon: ListOrdered,
+    text: "Respuestas"
   },
 ]
 
