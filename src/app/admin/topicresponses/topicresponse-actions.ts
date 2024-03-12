@@ -1,5 +1,6 @@
 "use server"
   
+import { categorizeResponse } from "@/services/category-services"
 import { getActiveConversation } from "@/services/conversationService"
 import { TopicResponseDAO, TopicResponseFormValues, createTopicResponse, deleteTopicResponse, getTopicResponseDAO, getActiveTopicResponsesDAOByPhone, updateTopicResponse, getTopicResponseDAOByConversationAndTopicId } from "@/services/topicresponse-services"
 import { revalidatePath } from "next/cache"
@@ -60,3 +61,10 @@ export async function deleteTopicResponseAction(id: string): Promise<boolean> {
     return true
 }
 
+export async function categorizeResponseAction(topicResponseId: string) {
+    await categorizeResponse(topicResponseId)
+
+    revalidatePath("/admin/topicResponses")
+
+    return true
+}

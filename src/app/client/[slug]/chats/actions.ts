@@ -74,6 +74,7 @@ export async function getDataConversations(clientId: string) {
     return data    
 }
 
+
 export async function getTotalMessages(clientId: string) {
     const conversations= await getConversationsOfClient(clientId)
 

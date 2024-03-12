@@ -6,13 +6,19 @@ import { getUsersOfClient } from "@/services/userService"
 import { HomeIcon, MessageCircle, User } from "lucide-react"
 import Link from "next/link"
 import { getDataConversations, getTotalMessages } from "./chats/actions"
+import { getConversationsCount, getMessagesCount } from "@/services/conversationService"
 
 interface Props{
   params: {
     slug: string
   },
 }
- 
+
+type DataRole = {
+  role: string,
+  count: number
+}
+
 type TipoCant = {
   tipo: string | null,
   cant: number
@@ -27,9 +33,9 @@ export default async function ClientPage({ params: { slug } }: Props) {
 
   const users= await getUsersOfClient(client?.id)
 
-  const conversations= await getDataConversations(client.id)
-  const messages= await getTotalMessages(client.id)
- 
+  const conversationsCount= await getConversationsCount(client.id)
+  const messagesCount= await getMessagesCount(client.id)
+
 
   return (
     <div className="flex flex-col">
@@ -44,10 +50,10 @@ export default async function ClientPage({ params: { slug } }: Props) {
                 <MessageCircle className="text-gray-500" size={20} />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{conversations.length}</div>
+                <div className="text-2xl font-bold">{conversationsCount}</div>
                 <div className="flex justify-between">
                   <p className="text-xs text-muted-foreground">
-                    {messages === 0 ? 'no hay mensajes' : `${messages} mensajes`}
+                    {messagesCount === 0 ? 'no hay mensajes' : `${messagesCount} mensajes`}
                   </p>
                 </div>
               </CardContent>
@@ -71,13 +77,9 @@ export default async function ClientPage({ params: { slug } }: Props) {
                       </p>
                     )                  
                   }
-                  {
-                    users.map(user => (
-                      <p key={user.id} className="text-xs text-muted-foreground">
-                        {user.name}
-                      </p>
-                    ))
-                  }
+                  <p className="text-xs text-muted-foreground">
+                    { users.length + " usuarios con rol cliente" }
+                  </p>
                 </div>
               </CardContent>
             </Card>

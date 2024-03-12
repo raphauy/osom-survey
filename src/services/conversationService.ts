@@ -32,7 +32,8 @@ export async function getConversationsOfClient(clientId: string) {
     include: {
       client: true,
       messages: true
-    }
+    },
+    take: 100
   })
 
   // order the conversations by the last message date
@@ -45,6 +46,28 @@ export async function getConversationsOfClient(clientId: string) {
   })
 
   return found;
+}
+
+export async function getConversationsCount(clientId: string) {
+  const count= await prisma.conversation.count({
+      where: {
+          clientId: clientId
+      }
+  })
+
+  return count
+}
+
+export async function getMessagesCount(clientId: string) {
+  const count= await prisma.message.count({
+      where: {
+          conversation: {
+              clientId: clientId
+          }
+      }
+  })
+
+  return count
 }
 
 
@@ -196,6 +219,7 @@ export async function processMessage(id: string) {
     function_call: "auto",
   })
 
+  
   let wantsToUseFunction = initialResponse.choices[0].finish_reason == "function_call"
   const usage= initialResponse.usage
   console.log("usage:")
@@ -223,7 +247,6 @@ export async function processMessage(id: string) {
 				content: JSON.stringify(content),
 			})
     }
-
 
     if(initialResponse.choices[0].message.function_call.name == "registrarRespuestas"){
 			let argumentObj = JSON.parse(initialResponse.choices[0].message.function_call.arguments)      

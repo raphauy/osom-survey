@@ -16,6 +16,7 @@ export type TopicResponseDAO = {
 	topic: TopicDAO
 	topicId: string
   topicName: string | null
+  categoryName: string | undefined
 }
 
 export const topicResponseSchema = z.object({
@@ -36,6 +37,7 @@ export async function getTopicResponsesDAO() {
     },
     include: {
       topic: true,
+      category: true,
     },
   })
   const res= found.map((topicResponse) => {
@@ -45,7 +47,8 @@ export async function getTopicResponsesDAO() {
         ...topicResponse.topic,
         enabledStr: topicResponse.topic.enabled ? "si" : "no"
       },
-      topicName: topicResponse.topic.name
+      topicName: topicResponse.topic.name,
+      categoryName: topicResponse.category?.name
     }
   })
 
@@ -66,6 +69,7 @@ export async function getActiveTopicResponsesDAOByPhone(phone: string) {
     },
     include: {
       topic: true,
+      category: true,
     },
     orderBy: {
       createdAt: 'asc'
@@ -78,7 +82,8 @@ export async function getActiveTopicResponsesDAOByPhone(phone: string) {
         ...topicResponse.topic,
         enabledStr: topicResponse.topic.enabled ? "si" : "no"
       },
-      topicName: topicResponse.topic.name
+      topicName: topicResponse.topic.name,
+      categoryName: topicResponse.category?.name
     }
   })
 
@@ -92,6 +97,7 @@ export async function getActiveTopicResponsesDAOByConversationId(conversationId:
     },
     include: {
       topic: true,
+      category: true,
     },
     orderBy: {
       createdAt: 'asc'
@@ -104,7 +110,8 @@ export async function getActiveTopicResponsesDAOByConversationId(conversationId:
         ...topicResponse.topic,
         enabledStr: topicResponse.topic.enabled ? "si" : "no"
       },
-      topicName: topicResponse.topic.name
+      topicName: topicResponse.topic.name,
+      categoryName: topicResponse.category?.name
     }
   })
 
@@ -119,6 +126,7 @@ export async function getTopicResponseDAOByConversationAndTopicId(conversationId
     },
     include: {
       topic: true,
+      category: true,
     },
   })
   if (!found) return null
@@ -130,6 +138,7 @@ export async function getTopicResponseDAOByConversationAndTopicId(conversationId
       enabledStr: found.topic.enabled ? "si" : "no"
     },
     topicName: found.topic.name,
+    categoryName: found.category?.name
   }
 
   return res as TopicResponseDAO
@@ -142,6 +151,7 @@ export async function getTopicResponseDAO(id: string) {
     },
     include: {
       topic: true,
+      category: true,
     },
   })
   if (!found) return null
@@ -153,6 +163,7 @@ export async function getTopicResponseDAO(id: string) {
       enabledStr: found.topic.enabled ? "si" : "no"
     },
     topicName: found.topic.name,
+    categoryName: found.category?.name
   }
 
   return res

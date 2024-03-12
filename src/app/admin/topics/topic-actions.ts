@@ -2,11 +2,16 @@
   
 import { revalidatePath } from "next/cache"
 import { getCurrentUser } from "@/lib/auth"
-import { TopicDAO, TopicFormValues, createTopic, updateTopic, deleteTopic, getTopicDAO, toggleTopicEnabled, getEnabledTopicsDAOBySlug } from "@/services/topic-services"
+import { TopicDAO, TopicFormValues, createTopic, updateTopic, deleteTopic, getTopicDAO, toggleTopicEnabled, getEnabledTopicsDAOBySlug, getTopicsDAO } from "@/services/topic-services"
 
 
 export async function getTopicDAOAction(id: string): Promise<TopicDAO | null> {
     return getTopicDAO(id)
+}
+
+export async function getTopicsDAOAction(): Promise<TopicDAO[] | null> {
+    const found= await getTopicsDAO()
+    return found
 }
 
 export async function getEnabledTopicsDAOBySlugAction(slug: string): Promise<TopicDAO[] | null> {

@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start -p 8065",
     "lint": "next lint",
+    "main": "tsx src/services/main.ts",
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
