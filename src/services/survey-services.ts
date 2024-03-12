@@ -74,6 +74,10 @@ export async function getSurveyDAO(id: string) {
   return res
 }
 
+export async function getSurveyCount() {
+  const count = await prisma.survey.count()
+  return count
+}
 export async function getSurveyDAOByPhone(phone: string) {
   const found = await prisma.survey.findUnique({
     where: {

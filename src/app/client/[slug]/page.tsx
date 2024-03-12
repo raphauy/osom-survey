@@ -25,9 +25,6 @@ type TipoCant = {
 }
 export default async function ClientPage({ params: { slug } }: Props) {
 
-  const dataClient= await getDataClientBySlug(slug)
-  if (!dataClient) return <div>Cliente no encontrado</div>
-
   const client= await getClientBySlug(slug)
   if (!client) return <div>Cliente no encontrado</div>
 
@@ -39,7 +36,7 @@ export default async function ClientPage({ params: { slug } }: Props) {
 
   return (
     <div className="flex flex-col">
-      <p className="mt-10 mb-5 text-3xl font-bold text-center">{dataClient.nombre}</p>
+      <p className="mt-10 mb-5 text-3xl font-bold text-center">{client.name}</p>
       <div className="grid grid-cols-1 gap-3 p-2 md:grid-cols-2">
 
         <div className="flex flex-col items-center">

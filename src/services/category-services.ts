@@ -6,6 +6,7 @@ import { getTopicResponsesDAO } from "./topicresponse-services"
 import OpenAI from "openai"
 import { ThreadMessage } from "openai/resources/beta/threads/messages/messages.mjs"
 import { getValue } from "./config-services"
+import { tr } from "date-fns/locale"
 
 export type CategoryDAO = {
 	id: string
@@ -295,4 +296,101 @@ export async function categorizeAssistant(response: string, assistantId: string)
     console.log("error: ", error)                
   }    
 
+}
+
+type CategorySumarize= {
+  name: string
+  count: number 
+  percentage: number
+}
+
+export async function getCategoriesSumarize(topicId: string) {
+  const found = await prisma.category.findMany({
+    where: {
+      topicId
+    },
+    include: {
+      topicResponses: true
+    }
+  })
+
+  const total= found.reduce((acc, c) => acc + c.topicResponses.length, 0)
+
+  // percentage with 1 decimals
+  const res= found.map(c => {
+    return {
+      name: c.name,
+      count: c.topicResponses.length,
+      percentage: Math.round(c.topicResponses.length / total * 1000) / 10
+    }
+  })
+
+  // sort by count
+  res.sort((a, b) => b.count - a.count)  
+
+  return res as CategorySumarize[]
+}
+
+type TopicSumarize= {
+  name: string
+  count: number 
+  percentage: number
+}
+
+export async function getTopicsSumarize() {
+  const found = await prisma.topic.findMany({
+    include: {
+      responses: true
+    }
+  })
+
+  const total= await prisma.topicResponse.count()
+
+  // percentage with 0 decimals
+  const res= found.map(c => {
+    return {
+      name: c.name,
+      count: c.responses.length,
+      percentage: Math.round((c.responses.length / total) * 100)
+    }
+  })
+
+  // sort by count
+  res.sort((a, b) => b.count - a.count)  
+
+  return res as TopicSumarize[]
+}
+
+export async function getTopicsSumarizeNotProcessed() {
+  const found = await prisma.topic.findMany({
+    include: {
+      responses: {
+        where: {
+          category: null
+        }      
+      }
+    }
+  })
+
+  const total= await prisma.topicResponse.count(
+    {
+      where: {
+        category: null
+      }
+    }
+  )
+
+  // percentage with 0 decimals
+  const res= found.map(c => {
+    return {
+      name: c.name,
+      count: c.responses.length,
+      percentage: Math.round((c.responses.length / total) * 100)
+    }
+  })
+
+  // sort by count
+  res.sort((a, b) => b.count - a.count)  
+
+  return res as TopicSumarize[]
 }

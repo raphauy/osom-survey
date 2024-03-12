@@ -38,6 +38,15 @@ export async function getTopicsDAO() {
   return res as TopicDAO[]
 }
 
+export async function getTopicByName(name: string) {
+  const found = await prisma.topic.findFirst({
+    where: {
+      name
+    }
+  })
+  return found
+}
+
 export async function getEnabledTopicsDAOByClient(clientId: string) {
   const found = await prisma.topic.findMany({
     where: {

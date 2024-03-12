@@ -1,7 +1,7 @@
 "use client"
 
 import { cn } from "@/lib/utils";
-import { Briefcase, ChevronRightSquare, ClipboardList, Layers, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, User } from "lucide-react";
+import { Briefcase, ChevronRightSquare, ClipboardList, Layers, LayoutDashboard, List, ListOrdered, MessageCircle, Settings, ShipWheel, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -59,6 +59,14 @@ const data= [
     href: "/admin/topicresponses",
     icon: ListOrdered,
     text: "Respuestas"
+  },
+  {
+    href: "divider", icon: User
+  },  
+  {
+    href: "/admin/categorization",
+    icon: ShipWheel,
+    text: "Categoriazación"
   },
 ]
 

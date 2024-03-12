@@ -65,6 +65,7 @@ export async function categorizeResponseAction(topicResponseId: string) {
     await categorizeResponse(topicResponseId)
 
     revalidatePath("/admin/topicResponses")
+    revalidatePath("/admin/categorization")
 
     return true
 }

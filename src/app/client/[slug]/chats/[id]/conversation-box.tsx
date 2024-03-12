@@ -133,7 +133,10 @@ export default function ConversationBox( { messages, responses, topics, survey }
             {responses?.map((response) => (
                 <Card className="w-full mt-1" key={response.id}>
                     <CardHeader>
-                    <CardTitle>{response.topic.name}</CardTitle>
+                    <div className="flex justify-between">
+                        <CardTitle>{response.topic.name}</CardTitle>
+                        <p className="text-osom-color">{response.categoryName}</p>
+                    </div>
                     </CardHeader>
                     <CardContent>
                         <div className="mb-1 grid grid-cols-[25px_1fr] items-start pb-3 last:mb-0 last:pb-0 space-y-1">

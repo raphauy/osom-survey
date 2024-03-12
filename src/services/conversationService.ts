@@ -57,6 +57,20 @@ export async function getConversationsCount(clientId: string) {
 
   return count
 }
+// conversations with at least one topic response
+export async function getConversationsWithTopicResponseCount(clientId: string) {
+  const count= await prisma.conversation.count({
+      where: {
+          clientId: clientId,
+          topicResponses: {
+            some: {}
+          }
+      }
+  })
+
+  return count
+
+}
 
 export async function getMessagesCount(clientId: string) {
   const count= await prisma.message.count({

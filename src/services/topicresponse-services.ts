@@ -212,4 +212,22 @@ export async function deleteTopicResponse(id: string) {
 }
 
 
-    
+export async function getTopicResponsesWithoutCategoryCount(topicId: string) {
+  const found = await prisma.topicResponse.count({
+    where: {
+      topicId,
+      categoryId: null
+    }
+  })
+  return found
+}
+
+export async function getNextTopicResponsesWithoutCategory(topicId: string) {
+  const found = await prisma.topicResponse.findFirst({
+    where: {
+      topicId,
+      categoryId: null
+    }
+  })
+  return found
+}

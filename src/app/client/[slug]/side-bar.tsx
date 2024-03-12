@@ -1,14 +1,27 @@
 "use client"
 
+import { getTopicsDAOAction } from "@/app/admin/topics/topic-actions";
 import { cn } from "@/lib/utils";
+import { TopicDAO } from "@/services/topic-services";
 import { BarChartHorizontalBig, LayoutDashboard, MessageCircle, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Props {
   slug: string
 }
 export default function SideBar({ slug }: Props) {
+  const [topics, setTopics] = useState<TopicDAO[]>([])
+
+  useEffect(() => {
+    getTopicsDAOAction()
+    .then((res) => {
+      if(!res) return
+      setTopics(res)
+    })
+  }, [])
+  
 
   const data= [
     {
@@ -23,11 +36,6 @@ export default function SideBar({ slug }: Props) {
       href: `/client/${slug}/chats`,
       icon: MessageCircle,
       text: "Conversaciones"
-    },
-    {
-      href: `/client/${slug}/graficos`,
-      icon: BarChartHorizontalBig,
-      text: "Gráficos"
     },
     {
       href: "divider", icon: User
@@ -64,6 +72,20 @@ export default function SideBar({ slug }: Props) {
 
         {divider()}
 
+        <Link href={`/client/${slug}/results`} className={cn(commonClasses, path.endsWith("results") && selectedClasses)}>
+          <BarChartHorizontalBig size={23} />
+          <p className={cn("hidden", !isChatPage && "md:block md:w-36")}>Resultados</p>
+        </Link>
+
+        {
+          topics.map((topic) => (
+            <Link href={`/client/${slug}/results/${topic.id}`} key={topic.id} className={cn(commonClasses, path.endsWith(topic.id) && selectedClasses)}>              
+              <p className={cn("hidden", !isChatPage && "md:block md:w-36 ml-8")}>{topic.name}</p>
+            </Link>
+          ))
+        }
+
+        {divider()}
 
 
       </section>
