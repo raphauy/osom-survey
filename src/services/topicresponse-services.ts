@@ -222,10 +222,9 @@ export async function getTopicResponsesWithoutCategoryCount(topicId: string) {
   return found
 }
 
-export async function getNextTopicResponsesWithoutCategory(topicId: string) {
+export async function getNextTopicResponsesWithoutCategory() {
   const found = await prisma.topicResponse.findFirst({
     where: {
-      topicId,
       categoryId: null
     }
   })

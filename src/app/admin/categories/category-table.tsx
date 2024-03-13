@@ -9,17 +9,27 @@ import { X } from "lucide-react"
 import { ColumnDef, ColumnFiltersState, SortingState, VisibilityState, flexRender, getCoreRowModel, getFacetedRowModel, getFacetedUniqueValues, getFilteredRowModel, getPaginationRowModel, getSortedRowModel, useReactTable } from "@tanstack/react-table"
 import { DataTablePagination } from "@/components/data-table/data-table-pagination"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
   
 interface DataTableToolbarProps<TData> {
   table: TanstackTable<TData>;
+  topics: string[]
 }
 
-export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>) {
+export function DataTableToolbar<TData>({ table, topics }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
 
   return (
     <div className="flex items-center gap-1 dark:text-white">
         
+          {table.getColumn("topicName") && topics && (
+              <DataTableFacetedFilter
+                column={table.getColumn("topicName")}
+                title="Tema"
+                options={topics}
+              />
+            )}
+
           <Input className="max-w-xs" placeholder="filtrar nombre..."
               value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
               onChange={(event) => table.getColumn("name")?.setFilterValue(event.target.value)}                
@@ -60,6 +70,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   columnsOff?: string[]
   subject: string
+  topics: string[]
 }
 
 export function DataTable<TData, TValue>({
@@ -67,6 +78,7 @@ export function DataTable<TData, TValue>({
   data,
   columnsOff,
   subject,
+  topics,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
@@ -106,7 +118,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full space-y-4 dark:text-white">
-      <DataTableToolbar table={table}/>
+      <DataTableToolbar table={table} topics={topics}/>
       <div className="border rounded-md">
         <Table>
           <TableHeader>

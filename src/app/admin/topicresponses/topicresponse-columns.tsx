@@ -95,7 +95,7 @@ export const columns: ColumnDef<TopicResponseDAO>[] = [
         <div className="flex items-center justify-end gap-2">
 
           {/* <TopicResponseDialog id={data.id} /> */}
-          {data.topicName === "TRABAJO" && <CategorizeButton topicResponseId={data.id} />}
+          <CategorizeButton topicResponseId={data.id} />
           <DeleteTopicResponseDialog description={deleteDescription} id={data.id} />
         </div>
 

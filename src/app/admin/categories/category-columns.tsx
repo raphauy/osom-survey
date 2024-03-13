@@ -26,7 +26,10 @@ export const columns: ColumnDef<CategoryDAO>[] = [
         {data.topicName}
         
       </div>
-    }
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    },
   },
 
   {

@@ -188,18 +188,17 @@ export async function categorizeResponse(topicResponseId: string) {
   const topic= found.topic
 
   
+  const key= topic.name + "_ASSISTANT_ID"
 
-  const TRABAJO_ASSISTANT_ID= await getValue("TRABAJO_ASSISTANT_ID")
+  const TRABAJO_ASSISTANT_ID= await getValue(key)
   if (!TRABAJO_ASSISTANT_ID) {
-      console.log("TRABAJO_ASSISTANT_ID is not defined")
+      console.log(`Assistant ID not found for topic ${topic.name} in key ${key}`)
       return
   } 
   
   const response= found.respuestaPlanteo
 
-  console.log("categorizing response")
   console.log("response:", response)
-  console.log("ASSISTANT_ID:", TRABAJO_ASSISTANT_ID)  
   
   const categoria= await categorizeAssistant(response, TRABAJO_ASSISTANT_ID)
   console.log("categoria:", categoria)

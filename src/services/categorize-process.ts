@@ -9,16 +9,6 @@ export async function initCategorize() {
     await setValue("STATUS", "RUNNING")
     console.log("status set to RUNNING")
 
-    const trabajoTopic= await getTopicByName("TRABAJO")
-    if (!trabajoTopic) {
-        console.log("TRABAJO topic not found")
-        return
-    }
-    const trabajoId= trabajoTopic.id
-    const topicsToProcessCount= await getTopicResponsesWithoutCategoryCount(trabajoId)
-
-    console.log("topicsToProcess: ", topicsToProcessCount)
-
     while (true) {
         const status= await getValue("STATUS")
         if (status === "STOPPED") {
@@ -26,7 +16,7 @@ export async function initCategorize() {
             break
         }
 
-        const nextToProcess= await getNextTopicResponsesWithoutCategory(trabajoId)
+        const nextToProcess= await getNextTopicResponsesWithoutCategory()
 
         if (!nextToProcess) {
             console.log("no more responses to categorize, sleeping for 5 seconds")
