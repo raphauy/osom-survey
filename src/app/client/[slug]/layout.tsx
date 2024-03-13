@@ -4,6 +4,7 @@ import { getDataClientBySlug, getDataClientOfUser } from "@/app/admin/clients/(c
 import { getClientBySlug } from "@/services/clientService";
 import { redirect } from "next/navigation";
 import SideBar from "./side-bar";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 interface Props {
   children: React.ReactNode
@@ -34,7 +35,9 @@ export default async function AdminLayout({ children, params }: Props) {
     <>
       <div className="flex flex-grow w-full">
         <SideBar slug={slug} />
-        <div className="flex flex-col items-center flex-grow p-1">{children}</div>
+        <TooltipProvider delayDuration={0}>
+          <div className="flex flex-col items-center flex-grow p-1">{children}</div>
+        </TooltipProvider>
       </div>
     </>
   )

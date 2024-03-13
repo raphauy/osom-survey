@@ -2,6 +2,8 @@ import { Progress } from "@/components/ui/progress"
 import { getCategoriesSumarize } from "@/services/category-services"
 import { getTopicDAO } from "@/services/topic-services"
 import DonutPage from "../donut-chart"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 
 type Props= {
   params: {
@@ -30,12 +32,22 @@ export default async function ResultsPage({ params }: Props) {
         <p className="w-full my-5 text-2xl font-bold text-center">Respuestas del tema {topic.name}</p>
         <p className="font-bold">Respuetas categorizadas:</p>
         <div className="space-y-5">
-          {categorySumarize.map(({ name, count, percentage }) => (
+          {categorySumarize.map(({ name, description, count, percentage }) => (
             <div key={name} className="w-full gap-4">
               <div className="flex justify-between">
                 <p>{name}</p>
-                <div className="grid w-32 grid-cols-2 gap-4 text-right">
-                  <p>{Intl.NumberFormat("es-UY").format(count)}</p>
+                <div className="grid grid-cols-2 gap-4 text-right w-36">
+                  <div className="flex items-center justify-between">
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Info size={18} />
+                        </TooltipTrigger>
+                        <TooltipContent className="text-left w-72">
+                            <p className="text-sm whitespace-pre-wrap">{description}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <p>{Intl.NumberFormat("es-UY").format(count)}</p>
+                  </div>
                   <p>({percentage}%)</p>
                 </div>
               </div>

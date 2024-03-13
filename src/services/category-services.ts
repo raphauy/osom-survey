@@ -299,6 +299,7 @@ export async function categorizeAssistant(response: string, assistantId: string)
 
 type CategorySumarize= {
   name: string
+  description: string
   count: number 
   percentage: number
 }
@@ -319,6 +320,7 @@ export async function getCategoriesSumarize(topicId: string) {
   const res= found.map(c => {
     return {
       name: c.name,
+      description: c.description || "",
       count: c.topicResponses.length,
       percentage: Math.round(c.topicResponses.length / total * 1000) / 10
     }
@@ -332,6 +334,7 @@ export async function getCategoriesSumarize(topicId: string) {
 
 type TopicSumarize= {
   name: string
+  description: string
   count: number 
   percentage: number
 }
@@ -349,6 +352,7 @@ export async function getTopicsSumarize() {
   const res= found.map(c => {
     return {
       name: c.name,
+      description: c.prompt,
       count: c.responses.length,
       percentage: Math.round((c.responses.length / total) * 100)
     }
@@ -383,6 +387,7 @@ export async function getTopicsSumarizeNotProcessed() {
   const res= found.map(c => {
     return {
       name: c.name,
+      description: c.prompt,
       count: c.responses.length,
       percentage: Math.round((c.responses.length / total) * 100)
     }

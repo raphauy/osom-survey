@@ -3,6 +3,8 @@ import { getTopicsSumarize } from "@/services/category-services"
 import { getClientBySlug } from "@/services/clientService"
 import { getConversationsCount, getConversationsWithTopicResponseCount } from "@/services/conversationService"
 import DonutPage from "./donut-chart"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { Info } from "lucide-react"
 
 interface Props{
   params: {
@@ -36,10 +38,21 @@ export default async function ResultsPage({ params: { slug } }: Props) {
         <p className="mb-8 text-center"><span className="font-bold">{Intl.NumberFormat("es-UY").format(answeredConversationsCount)}</span> encuestas con al menos 1 respuesta  (<span className="font-bold">{responsesPercentage}%</span>)</p>
         <p className="mb-2">Respuetas:</p>
         <div className="space-y-10">
-          {topicSumarize.map(({ name, count, percentage }) => (
+          {topicSumarize.map(({ name, description, count, percentage }) => (
             <div key={name} className="w-full gap-4">
               <div className="flex justify-between">
-                <p>{name}</p>
+                <div className="flex items-center gap-3">
+                  <p>{name}</p>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <Info size={18} />
+                      </TooltipTrigger>
+                      <TooltipContent className="text-left w-72">
+                          <p className="mb-5 text-lg font-bold">RRRRR:</p>
+                          <p className="text-sm whitespace-pre-wrap">{removeMiddle(description)}</p>
+                      </TooltipContent>
+                  </Tooltip>
+                </div>
                 <div className="flex justify-end w-20 gap-4">
                   <p>{Intl.NumberFormat("es-UY").format(count)}</p>
                   <p>({percentage}%)</p>
@@ -57,4 +70,8 @@ export default async function ResultsPage({ params: { slug } }: Props) {
       {/* <DonutPage data={data} /> */}
     </div>
   )
+}
+
+function removeMiddle(text: string) {
+  return text.replace("Debes esperar a la respuesta de la parte 1 para preguntar la parte 2.\n\n", "")  
 }
