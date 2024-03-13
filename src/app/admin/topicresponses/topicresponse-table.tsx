@@ -12,8 +12,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { DataTableFacetedFilter } from "@/components/data-table/data-table-faceted-filter"
   
 interface DataTableToolbarProps<TData> {
-  table: TanstackTable<TData>;
-  topics: string[];
+  table: TanstackTable<TData>
+  topics: string[]
 }
 
 export function DataTableToolbar<TData>({ table, topics }: DataTableToolbarProps<TData>) {

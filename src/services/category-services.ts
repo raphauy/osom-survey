@@ -322,7 +322,7 @@ export async function getCategoriesSumarize(topicId: string) {
       name: c.name,
       description: c.description || "",
       count: c.topicResponses.length,
-      percentage: Math.round(c.topicResponses.length / total * 1000) / 10
+      percentage: Math.round((c.topicResponses.length / total) * 100)
     }
   })
 

@@ -9,6 +9,15 @@ export async function initCategorize() {
     await setValue("STATUS", "RUNNING")
     console.log("status set to RUNNING")
 
+    let sleepTimeStr= await getValue("CATEGORIZE_SLEEP_TIME")
+    if (!sleepTimeStr) {
+        console.log("CATEGORIZE_SLEEP_TIME not found, setting to 10 seconds")
+        await setValue("CATEGORIZE_SLEEP_TIME", "10")
+        sleepTimeStr= "10"
+    }
+    const sleepTime= parseInt(sleepTimeStr) * 1000
+    console.log(`sleepTime: ${sleepTime/1000} seconds`)
+
     while (true) {
         const status= await getValue("STATUS")
         if (status === "STOPPED") {
@@ -19,8 +28,8 @@ export async function initCategorize() {
         const nextToProcess= await getNextTopicResponsesWithoutCategory()
 
         if (!nextToProcess) {
-            console.log("no more responses to categorize, sleeping for 5 seconds")
-            await new Promise((resolve) => setTimeout(resolve, 5000))
+            console.log(`no more responses to categorize, sleeping for ${sleepTime} milliseconds`)
+            await new Promise((resolve) => setTimeout(resolve, sleepTime))
         } else {
             //console.log("status is RUNNING, categorizing response")
             await categorizeResponse(nextToProcess.id)            

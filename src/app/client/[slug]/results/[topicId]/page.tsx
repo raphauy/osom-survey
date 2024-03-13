@@ -37,7 +37,7 @@ export default async function ResultsPage({ params }: Props) {
               <div className="flex justify-between">
                 <p>{name}</p>
                 <div className="grid grid-cols-2 gap-4 text-right w-36">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between w-20">
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Info size={18} />

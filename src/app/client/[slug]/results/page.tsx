@@ -41,23 +41,23 @@ export default async function ResultsPage({ params: { slug } }: Props) {
           {topicSumarize.map(({ name, description, count, percentage }) => (
             <div key={name} className="w-full gap-4">
               <div className="flex justify-between">
-                <div className="flex items-center gap-3">
-                  <p>{name}</p>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                          <Info size={18} />
-                      </TooltipTrigger>
-                      <TooltipContent className="text-left w-72">
-                          <p className="mb-5 text-lg font-bold">RRRRR:</p>
-                          <p className="text-sm whitespace-pre-wrap">{removeMiddle(description)}</p>
-                      </TooltipContent>
-                  </Tooltip>
-                </div>
-                <div className="flex justify-end w-20 gap-4">
-                  <p>{Intl.NumberFormat("es-UY").format(count)}</p>
+                <p>{name}</p>
+                <div className="grid grid-cols-2 gap-4 text-right w-36">
+                  <div className="flex items-center justify-between w-20">
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Info size={18} />
+                        </TooltipTrigger>
+                        <TooltipContent className="text-left w-72">
+                            <p className="text-sm whitespace-pre-wrap">{removeMiddle(description)}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                    <p>{Intl.NumberFormat("es-UY").format(count)}</p>
+                  </div>
                   <p>({percentage}%)</p>
                 </div>
               </div>
+              {/* <p className="text-sm whitespace-pre-wrap">{removeMiddle(description)}</p> */}
               <div className="flex items-center justify-between">
                 <Progress value={percentage} className="h-3"/>
               </div>
