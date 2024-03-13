@@ -198,13 +198,15 @@ export async function categorizeResponse(topicResponseId: string) {
   
   const response= found.respuestaPlanteo
 
-  console.log("response:", response)
+  console.log("Input:", response)
   
   const categoria= await categorizeAssistant(response, TRABAJO_ASSISTANT_ID)
-  console.log("categoria:", categoria)
+  console.log("\tAssistant:", categoria)
 
   if (!categoria) {
+    console.log("*******************************************")
     console.log("Assistant could not categorize the response")
+    console.log("*******************************************")
     return
   }
 
@@ -220,8 +222,6 @@ export async function categorizeResponse(topicResponseId: string) {
     console.log(`Category ${categoria} not found for topic ${topic.name}`)
     return
   }
-
-  console.log("category found! updating")
 
   // update topicResponse
   const updated= await prisma.topicResponse.update({
@@ -254,7 +254,7 @@ export async function categorizeAssistant(response: string, assistantId: string)
       ]
       })
 
-    console.log("creating run for categorizeAssistant")
+    //console.log("creating run for categorizeAssistant")
     let run = await openai.beta.threads.runs.create(createdThread.id, { assistant_id: assistantId, model: "gpt-4-turbo-preview" })
 
     const runId= run.id
@@ -271,7 +271,7 @@ export async function categorizeAssistant(response: string, assistantId: string)
       }
 
       const timeToSleep= 1
-      console.log("sleeping...")
+      console.log("\tsleeping...")
       await new Promise(resolve => setTimeout(resolve, timeToSleep * 1000))
     }
 

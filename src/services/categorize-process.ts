@@ -22,7 +22,7 @@ export async function initCategorize() {
             console.log("no more responses to categorize, sleeping for 5 seconds")
             await new Promise((resolve) => setTimeout(resolve, 5000))
         } else {
-            console.log("status is RUNNING, categorizing response")
+            //console.log("status is RUNNING, categorizing response")
             await categorizeResponse(nextToProcess.id)            
         }
 
