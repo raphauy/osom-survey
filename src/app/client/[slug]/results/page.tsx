@@ -67,7 +67,7 @@ export default async function ResultsPage({ params: { slug } }: Props) {
         <p className="mt-5 text-right"><span className="font-bold">{Intl.NumberFormat("es-UY").format(responsesCount)}</span> respuestas</p>        
 
       </div>
-      {/* <DonutPage data={data} /> */}
+      <DonutPage data={data} />
     </div>
   )
 }

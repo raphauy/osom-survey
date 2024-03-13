@@ -57,7 +57,7 @@ export default async function ResultsPage({ params }: Props) {
         </div>
         <p className="text-right">{Intl.NumberFormat("es-UY").format(total)} respuestas</p>
       </div>
-      {/* <DonutPage data={data} innerRadius={144} outerRadius={192} /> */}
+      <DonutPage data={data} innerRadius={144} outerRadius={192} />
     </div>
   )
 }
