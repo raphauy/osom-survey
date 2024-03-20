@@ -218,9 +218,11 @@ export async function categorizeResponse(topicResponseId: string) {
     }
   })
 
+  let categoryId= getDefaultCategoryIdByTopicName(topic.name)
   if (!category) {
-    console.log(`Category ${categoria} not found for topic ${topic.name}`)
-    return
+    console.log(`Category ${categoria} not found for topic ${topic.name}. Setting default category ${categoryId}`)
+  } else {
+    categoryId= category.id
   }
 
   // update topicResponse
@@ -231,7 +233,7 @@ export async function categorizeResponse(topicResponseId: string) {
     data: {
       category: {
         connect: {
-          id: category.id
+          id: categoryId
         }
       }
     }
@@ -397,4 +399,19 @@ export async function getTopicsSumarizeNotProcessed() {
   res.sort((a, b) => b.count - a.count)  
 
   return res as TopicSumarize[]
+}
+
+function getDefaultCategoryIdByTopicName(topicName: string) {
+  switch (topicName) {
+    case "TRABAJO":
+      return "cltoeuqn6000k1369dewdpdx6"
+    case "INSEGURIDAD":
+      return "cltpx6e3r000xkwu4a0z5mcn1"
+    case "INFRAESTRUCTURA":
+      return "cltpxcwte001hkwu44n8gbodz"
+    case "SALUD":
+      return "cltpx1rz1000dkwu4ioc3moyf"
+    default:
+      return "cltoeuqn6000k1369dewdpdx6"
+  }
 }
