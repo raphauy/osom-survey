@@ -225,6 +225,7 @@ export async function getSurveyAllData(phone: string): Promise<SurveyAllData | n
         respuestaPlanteo: t.respuestaPlanteo,
         respuestaSolucion: t.respuestaSolucion,
         gravedad: t.gravedad,
+        categoria: t.categoryName,
       }
     })
   }
