@@ -257,7 +257,7 @@ export async function categorizeAssistant(response: string, assistantId: string)
       })
 
     //console.log("creating run for categorizeAssistant")
-    let run = await openai.beta.threads.runs.create(createdThread.id, { assistant_id: assistantId, model: "gpt-4-turbo-preview" })
+    let run = await openai.beta.threads.runs.create(createdThread.id, { assistant_id: assistantId, model: "gpt-4-turbo" })
 
     const runId= run.id
     let status= run.status
