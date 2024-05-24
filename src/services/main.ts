@@ -2,13 +2,13 @@ import { categorizeResponse } from "./category-services"
 
 async function main() {
 
-    const topicResponseId = 'clsdi8kba06j912i0ylaezedl'
+    const viviendaTopicResponseId = 'clu2k847z000r114qyg9jho2j'
 
-    await categorizeResponse(topicResponseId)
+    //await categorizeResponse(viviendaTopicResponseId)
 
 
 
 }
   
-main()
+//main()
   
